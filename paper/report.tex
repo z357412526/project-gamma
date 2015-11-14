@@ -26,10 +26,12 @@
 \maketitle
 
 \abstract{We report analyses intended to explore the functional magnetic
-  resonance imaging (fMRI) data collected in studies conducted by Repovs et al.,
+  resonance imaging (fMRI) data collected in studies conducted by Repovs et 
+  al.,
 on the manner in which brain network connectivity is related to schizophrenia
 \cite{repovs2011,repovs2012}. A host of exploratory analyses, combining both
-classical linear modeling methods and machine learning, were undertaken in order
+classical linear modeling methods and machine learning, were undertaken in 
+order
 to gain further insights into the fMRI data examined.}
 
 \section{Introduction}
@@ -42,7 +44,8 @@ al. conducted neuroimaging studies, including both functional connectivity
 magnetic resonance imaging (fcMRI) and diffusion tensor imaging (DTI), on many
 subjects, with their goal being to characterize the activity of several brain
 regions chosen a priori, and to develop an understanding of how the functional 
-activities of these regions may differ across health states \cite{repovs2011,repovs2012}.
+activities of these regions may differ across health states \cite{repovs2011,
+repovs2012}.
 
 \section{Data}
 
@@ -53,8 +56,10 @@ thought to be associated with depressed cognitive function in individuals with
 schizophrenia by collecting functional connectivity magnetic resonance imaging
 (fcMRI) data on healthy individuals, individuals with schizophrenia, and the
 (healthy) siblings of participants in either of the two former groups
-\cite{repovs2012}. For the purposes of the analyses reported in this paper, the imaging
-data were acquired from the OpenfMRI project (\url{https://openfmri.org/}), where they
+\cite{repovs2012}. For the purposes of the analyses reported in this paper, 
+the imaging
+data were acquired from the OpenfMRI project (\url{https://openfmri.org/}), 
+where they
 are listed with accession number ds000115. The data is available for groups of
 subjects, with each subject-specific data directory containing anatomical MR
 imaging data, functional MR imaging (using the BOLD contrast) data, and
@@ -76,14 +81,16 @@ during the performance of n-back tasks using unsupervised learning methods
 assumed in the literature. Specifically, we want to find regions that are
 associated with dynamic, task-related and functional aspects of brain
 activities, instead of just anatomical subdivisions. Two preliminary types of
-analysis are performed and introduced below, along with diagnostic checks of the
+analysis are performed and introduced below, along with diagnostic checks of 
+the
 validity of the results. 
 
 \section{Results}
 
 \subsection{Data fetching and pre-processing}
 
-For all BOLD datasets, we removed the first five images to allow measurements to
+For all BOLD datasets, we removed the first five images to allow measurements 
+to
 achieve steady state. In addition, we prepared scripts to detect the root mean
 square (RMS) difference outliers using the inter-quartile range (IQR) to define
 outliers. This is because they could imply a sudden widespread shift in signals
@@ -100,17 +107,20 @@ feature sets for k-means clustering.
 This set of methods aim to produce an image identifying the regions which show
 significant signal change in response to the task by calculating correlation
 coefficients (r) between the bold signal along the time course and a reference
-waveform, for each voxel. A high value of the correlation coefficient means that
+waveform, for each voxel. A high value of the correlation coefficient means 
+that
 fluctuation of the signal in the locale of the brain is task-dependent, hence
 activated by the task.
 
 For a bold signal X, and a reference waveform Y, the correlation coefficient is
 calculated as 
 \begin{equation}
-r = \frac{\Sigma  ( X-\bar{X}) ( Y-\bar{Y})}{\sqrt{ \Sigma ( X-\bar{X} ) ^2 \Sigma ( Y-\bar{Y})  ^2 }}
+r = \frac{\Sigma  ( X-\bar{X}) ( Y-\bar{Y})}{\sqrt{ \Sigma ( X-\bar{X} ) ^2 
+\Sigma ( Y-\bar{Y})  ^2 }}
 \end{equation}
 
-The two methods we are testing here are differentiated by two types of reference
+The two methods we are testing here are differentiated by two types of 
+reference
 waveforms: (1) square wave using on-off neural prediction from condition file
 (SW method), and (2) a convolved function on neural predictions and a gamma
 haemodynamic response function (HRF) (CF method). 
@@ -140,14 +150,17 @@ the task-dependent voxels in our future analysis.
 
 K-means clustering is an unsupervised technique which aims to partition n
 observations into k clusters based on a feature set of n features. Each
-observation is classified into the cluster with the nearest mean. In our case, n
+observation is classified into the cluster with the nearest mean. In our case, 
+n
 is the number of voxels. k is chosen to be 5 although ideally, we should run
 K-means with multiple k values \cite{venkataraman2009}. Clustering results
 across the three runs of the same subject are merged together using a voting
 algorithm \cite{dimitriadou2002}. We used three sets of features as described
 below to obtain three sets of clustering results: (1) mean of BOLD signals over
-time course for every voxel, (2) all signals in the time course for every voxel,
-(3) all signals in the time course for every voxel, centered and normalized over
+time course for every voxel, (2) all signals in the time course for every 
+voxel,
+(3) all signals in the time course for every voxel, centered and normalized 
+over
 all signals in the corresponding time step. 
 
 We do not involve the conditional file in the clustering. This is because the
@@ -155,7 +168,8 @@ underlying time courses are the same across methods as we compare across the
 same subjects. Since Feature Set (1) only uses mean as a single feature, it
 determines the clusters only based on intensity of the BOLD signals and can be
 used a naive set of non-functional clusters (i.e. the other two or future
-methods should deviate from this to reveal functional clusters). A comparison of
+methods should deviate from this to reveal functional clusters). A comparison 
+of
 results across the three input feature sets is shown.
 
 \centering
@@ -167,13 +181,16 @@ Thalamus-related region in the center of the brain.  Although there are visible
 differences across subjects and runs, the differences across methods are almost
 negligible. A scaled feature set has eliminated the intensity but does not
 deviate from the naive clustering. The reason could be that there is too much
-noise in the data. As an example, a drift term might be alone in determining the
+noise in the data. As an example, a drift term might be alone in determining 
+the
 clustering results. 
 
 \subsection{Validation}
 
-As we adopted a simple linear regression to fit our MRI data cross the predicted
-neural time course, we need to check linear model assumptions before we conclude
+As we adopted a simple linear regression to fit our MRI data cross the 
+predicted
+neural time course, we need to check linear model assumptions before we 
+conclude
 validity of the model. One of the most important assumptions of linear model is
 the normality of residuals.
 
@@ -200,19 +217,24 @@ p-values per voxel and $\alpha$ = 0.05, more than half of the test
 
 We have adopted several methods to handle this multiple comparison problem. 1)
 Bonferroni procedure, in which reject the null if $p< \alpha/n$, where n is the
-sample size. 2) Hochberg’s setup, in which order the p-values $p_1,\dots,p_n$ is
+sample size. 2) Hochberg’s setup, in which order the p-values $p_1,\dots,p_n$ 
+is
 associate with corresponding hypothesis $H(1), \dots, H(n)$.Reject all
 hypotheses $H(k) $having $p(k)\leq \alpha/(n+1-k)$, where $ k=1,2,\dots,n$. 3)
-Benjamini-Hochberg procedure, in which Order the p-values $P(1),P(2),\dots,P(n)$
+Benjamini-Hochberg procedure, in which Order the p-values 
+$P(1),P(2),\dots,P(n)$
 and their associated hypothesis $H(1),\dots,H(n)$. Reject all hypotheses H(k)
 having $P(k) \leq (k/n)\times \alpha $ ($k=1,\dots ,n$).
 
-To be consistent with previous example, these three methods are also implemented
+To be consistent with previous example, these three methods are also 
+implemented
 on the MRI data of 11th subject: (1) with Bonferroni correction and outliers
 removed, there are 32896 voxels out of 147456 are not normally distributed; (2)
 with Hochberg's procedure and outliers removed, there are 4843 voxels out of
-147456 are not normally distributed; (3) with Benjamini-Hochberg's procedure and
-outliers removed, there are 0 voxels out of 147456 are not normally distributed.
+147456 are not normally distributed; (3) with Benjamini-Hochberg's procedure 
+and
+outliers removed, there are 0 voxels out of 147456 are not normally 
+distributed.
 
 
 \section{Discussion}
@@ -225,12 +247,15 @@ revealing functional clustering of the brain. This can be done by:
 Improving the input features by inspecting and removing first principal
 components of the datasets. This need to be done with care by visually
 inspecting the principal components and consulting literature on the types and
-characteristics of noise. One criterion of noise can be that the fluctuation has
+characteristics of noise. One criterion of noise can be that the fluctuation 
+has
 a period clearly greater than the on-off cycle of the task. 
 
-Improving input features by fitting the BOLD signals to a linear model and using
+Improving input features by fitting the BOLD signals to a linear model and 
+using
 the residuals as input to K-means clustering. Using the same example above, a
-drift term can be included in the design matrix so that it can be removed in the
+drift term can be included in the design matrix so that it can be removed in 
+the
 residuals. This is the opposite of linear modelling to fit the data since in
 this case, the aim is not to have a model to fit the data as best as possible
 but to make use of the residuals in subsequent classification algorithms.
@@ -238,7 +263,7 @@ but to make use of the residuals in subsequent classification algorithms.
 %\begin{figure}
 \centering
 \includegraphics[width=12cm, height=12cm]{first_pcs_removed.jpg}
-%\caption{An example of removing first principal components to reduce noise in the data}
+%\caption{An example of removing first principal components to reduce noise}
 %\end{figure}
 
 Improving other analyses: applying the same methods of noise reduction in
@@ -274,9 +299,10 @@ In our analysis, the condition record we used has fraction seconds for scan
 duration (0.769951s), a very small proportion of TR. In the previous analysis,
 the duration we dealt with are always a multiple of TR (2.5s), in which
 reasonably chose TR as the unit. While in our case, if we still stick to use
-TR=2.5s as the scale, meaning we have to divide 0.769951 by 2.5 (around 0.30798)
+TR=2.5s as the scale, meaning we have to divide 0.769951 by 2.5 (around 
+0.30798)
 to fit the scale, the resulted convolution will be far deviated from the real
-scenario which will be reflected as huge errors in the future
+scenario which will be reflected as huge errors in the future 
 analysis. Therefore, we adopted the following strategy to tackle this problem:
 1) rescale data, converting from 2.5s to 0.1s as the unit; 2) in each 2.5s
 interval, we chose the median value to represent convolved data in that time
@@ -284,8 +310,9 @@ interval; 3) convolve the data in the standard approach. This gives the
 convolved function that we used in the analysis of correlation. 
 
 Further, the analysis done in the paper  “Brain Network Connectivity in
-Individuals with Schizophrenia and their Siblings” is based on the Resting State
-dataset, and they investigate the connectivity of the regions in the brain for
+Individuals with Schizophrenia and their Siblings” is based on the Resting 
+Statedataset, and they investigate the connectivity of the regions in the brain 
+for
 patients and healthy controls. We tried to reproduce their result using the
 data, however, we encounter the problem of separating the resting state data
 from the entire time set since it involves complicated techniques that way
